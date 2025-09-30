@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car List</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+ 
+</head>
+<body>
+<h1>Car List</h1>
+
+<form method="get">
+    <label for="color">Filter by color:</label>
+    <select name="color" id="color" onchange="this.form.submit()">
+        <option value="">All</option>
+        {% for code, label in colors %}
+            <option value="{{ code }}" {% if request.GET.color == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Color</th>
+        <th>Actions</th>
+    </tr>
+    {% for car in car_list %}
+        <tr>
+            <td>{{ car.id }}</td>
+            <td>{{ car.car_name }}</td>
+            <td>{{ car.car_color }}</td>
+            <td>
+                <a href="{% url 'car-update' car.id %}">Edit</a>
+                <form method="post" action="{% url 'car-delete' car.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4">No cars available.</td></tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'car-create' %}">Add New Car</a>
+</body>
+</html>
